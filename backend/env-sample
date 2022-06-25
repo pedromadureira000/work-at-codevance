@@ -1,0 +1,21 @@
+DEBUG=True
+SECRET_KEY=Your_secret_key
+ALLOWED_HOSTS=localhost, 127.0.0.1
+
+#------------- Database
+DATABASE_URL=postgres://postgres:postgres@localhost:5432/testdb
+# DATABASE_URL=<protocolo postgres>://<usuario>:<senha>@<endereço ip>:<porta>/<nome_do_banco>
+# Command to access : psql postgres://phsw:senhasegura@localhost:5432/postgres 
+
+#-------------AWS
+AWS_ACCESS_KEY_ID=
+AWS_SECRET_ACCESS_KEY=
+AWS_STORAGE_BUCKET_NAME=
+INTERNAL_IPS=127.0.0.1
+
+#---------SMTP com anymail
+EMAIL_BACKEND=anymail.backends.mailgun.EmailBackend
+DEFAULT_FROM_EMAIL=no-reply@phsolucoesweb.com.br
+SERVER_EMAIL=dev@phsolucoesweb.com.br
+MAILGUN_API_KEY=some_token_value
+MAILGUN_SENDER_DOMAIN=mg.phsolucoesweb.com.br
