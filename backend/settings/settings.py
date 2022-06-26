@@ -63,7 +63,8 @@ INSTALLED_APPS = [
     'rest_framework.authtoken',
     'rolepermissions',
     'django_cpf_cnpj',
-    'drf_yasg'
+    'drf_yasg',
+    'django_celery_beat',
 ]
 
 if DEBUG:
@@ -202,6 +203,14 @@ USE_TZ = True
 LOCALE_PATHS = (
     os.path.join(BASE_DIR, "locale"),
 )
+
+CELERY_BROKER_URL = config('CELERY_BROKER_URL')
+CELERY_ACCEPT_CONTENT = ['application/json']
+CELERY_RESULT_SERIALIZER = 'json'
+CELERY_TIMEZONE = TIME_ZONE
+
+#CELERY BEAT
+CELERY_BEAT_BEAT_SCHEDULER = "django_celery_beat.schedulers:DatabaseScheduler"  #XXX Not sure if this configuration is working
 
 # Static files (CSS, JavaScript, Images)
 # https://docs.djangoproject.com/en/3.2/howto/static-files/

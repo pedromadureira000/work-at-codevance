@@ -1,8 +1,6 @@
 from django.db import transaction
-from django.db.models.query import Prefetch
 from rest_framework import status
 from rest_framework.response import Response
-from organization.models import SupplierCompany
 from payment.serializers import PaymentGETSerializer, PaymentHistorySerializer, PaymentPOSTSerializer, PaymentPUTSerializer, RequestAnticipationSerializer
 from .models import Payment, PaymentHistory
 from rest_framework.views import APIView
@@ -12,10 +10,6 @@ from settings.response_templates import error_response, not_found_response, seri
 from django.utils.translation import gettext_lazy as _
 from drf_yasg import openapi
 from rest_framework.decorators import action
-from django.core.exceptions import ValidationError
-import math
-from datetime import datetime
-import copy
 
 class PaymentView(APIView):
     anticipation_status_query_string = openapi.Parameter('anticipation_status', openapi.IN_QUERY, description="1 => Available; 2 => Waiting confirmation; 3 => Anticipated; 4 => Unavailable; 5 => Denied", type=openapi.TYPE_STRING)

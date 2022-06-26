@@ -37,7 +37,7 @@ class PaymentHistory(models.Model):
         ('A', _('Alteration')),
     )
     payment = models.ForeignKey('Payment', on_delete=models.DO_NOTHING, verbose_name=_('payment'), related_name='payment_history')
-    user = models.ForeignKey('user.User', on_delete=models.DO_NOTHING, verbose_name=_('user'))
+    user = models.ForeignKey('user.User', null=True, on_delete=models.DO_NOTHING, verbose_name=_('user'))
     history_type = models.CharField(choices=type_choices, max_length=2,verbose_name=_('history type'))
     history_description = models.CharField(verbose_name=_('history description'),max_length=800)
     date = models.DateTimeField(auto_now_add=True, verbose_name=_('date'))

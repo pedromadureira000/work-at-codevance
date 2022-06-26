@@ -17,6 +17,9 @@ gunicorn = "*"
 django-cpf-cnpj = "*"
 django-extensions = "*"
 djangorestframework-simplejwt = "*"
+celery = "*"
+django-redis = "*"
+django-celery-beat = "*"
 
 [dev-packages]
 pytest = "*"

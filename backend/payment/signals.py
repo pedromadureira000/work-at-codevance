@@ -29,12 +29,13 @@ def payment_post_save(sender, instance, created=False, **kwargs):
         payment_history = PaymentHistory(payment=instance, history_type="A", user=request_user, history_description="")
         #  Change payment anticipation_status
         if old_instance.anticipation_status != instance.anticipation_status:
+            print('========================> : This is supose to happen' )
             old_status = instance.get_anticipation_status_verbose_name(old_instance.anticipation_status)
             new_status = instance.get_anticipation_status_verbose_name(instance.anticipation_status)
             payment_history.history_description = _("- Payment anticipation status changed from '{old_status}' to '{new_status}'.").format(old_status=old_status, new_status=new_status)
 
         if old_instance.anticipation_due_date != instance.anticipation_due_date:
-            if request_user.supplier_company:
+            if request_user and request_user.supplier_company:
                 payment_history.history_description += _("\n- The supplier user requested a due date anticipation. The date requested was '{anticipation_due_date}'.").format(anticipation_due_date=instance.anticipation_due_date)
             else:
                 payment_history.history_description += _("\n- The operator requested a due date anticipation. The date requested was '{anticipation_due_date}'.").format(anticipation_due_date=instance.anticipation_due_date)
