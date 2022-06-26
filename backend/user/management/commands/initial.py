@@ -24,7 +24,7 @@ class Command(BaseCommand):
         )
         assign_role(supplier_user, 'supplier_user')
 
-        supplier_company2 = SupplierCompany(company_name="SupComp", cnpj="26.827.665/0001-67")
+        supplier_company2 = SupplierCompany(company_name="SupComp2", cnpj="49.337.628/0001-76")
         supplier_company2.save()
 
         supplier_user2 = User.objects.create_user(

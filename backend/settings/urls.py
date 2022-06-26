@@ -35,7 +35,7 @@ if settings.DEBUG:
        openapi.Info(
           title="API Documentation",
           default_version='v1',
-          description="Order-System API definition",
+          description="Work-at-Codevance challenge API definition",
           #  terms_of_service="https://www.google.com/policies/terms/",
           contact=openapi.Contact(email="contato@phsolucoesweb.com.br"),
           license=openapi.License(name="No License"),

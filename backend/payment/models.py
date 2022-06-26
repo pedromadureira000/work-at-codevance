@@ -17,9 +17,11 @@ class Payment(models.Model):
     supplier_company = models.ForeignKey('organization.SupplierCompany', on_delete=models.PROTECT, verbose_name=_('supplier company'))
     operator = models.ForeignKey('user.User', on_delete=models.PROTECT, verbose_name=_('operator'))
     anticipation_status = models.IntegerField(choices=status_choices)
-    issuance_date = models.DateTimeField(verbose_name=_('issuance date'))
+    issuance_date = models.DateTimeField(auto_now_add=True, verbose_name=_('issuance date'))
+    anticipation_due_date = models.DateTimeField(null=True, blank=True ,verbose_name=_('pending anticipation due date'))
     due_date = models.DateTimeField(verbose_name=_('due date'))
     original_value = models.DecimalField(max_digits=11, decimal_places=2, verbose_name=_('original value'))
+    new_value = models.DecimalField(null=True, blank=True,max_digits=11, decimal_places=2, verbose_name=_('new value'))
 
     def get_anticipation_status_verbose_name(self, anticipation_status):
         return [value[1] for value in Payment._meta.get_field("anticipation_status").choices if value[0] == anticipation_status][0]
