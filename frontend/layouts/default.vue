@@ -70,6 +70,9 @@
 				</template>
 				<v-card class="no-padding">					
 					<v-list>
+            <v-list-item to="/myaccount">
+              <v-list-item-title>My Account</v-list-item-title>
+            </v-list-item>
             <v-list-item @click="logout">
               <v-list-item-title>Logout</v-list-item-title>
             </v-list-item>
