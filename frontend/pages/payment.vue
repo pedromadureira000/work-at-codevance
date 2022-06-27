@@ -185,6 +185,7 @@ export default {
       payments: [],
       loading: false,
       headers: [
+        { text: 'ID', value: 'id' },
         { text: 'Supplier company', value: 'supplier_company' },
         { text: 'Issuance date', value: 'issuance_date' },
         { text: 'Due date', value: 'due_date' },

@@ -58,7 +58,6 @@ INSTALLED_APPS = [
     'django.contrib.messages',
     'django.contrib.staticfiles',
     'django_extensions',
-    'anymail',
     'rest_framework',
     'rest_framework.authtoken',
     'rolepermissions',
@@ -126,23 +125,17 @@ WSGI_APPLICATION = 'settings.wsgi.application'
 
 
 #  SMTP
+EMAIL_BACKEND = "django.core.mail.backends.smtp.EmailBackend"
+DEFAULT_FROM_EMAIL = config('DEFAULT_FROM_EMAIL')
+EMAIL_HOST = config('EMAIL_HOST')
+EMAIL_PORT = config('EMAIL_PORT')
+EMAIL_HOST_USER = config('EMAIL_HOST_USER') 
+EMAIL_HOST_PASSWORD = config('EMAIL_HOST_PASSWORD')
+EMAIL_USE_TLS = True
+
 if DEBUG:
     CSRF_TRUSTED_ORIGINS = ['http://localhost:3000', 'http://localhost:8000/'] 
-    EMAIL_BACKEND = "django.core.mail.backends.smtp.EmailBackend"
-    DEFAULT_FROM_EMAIL = "webmaster@localhost"
-    EMAIL_HOST = "localhost"
-    EMAIL_PORT = "1025"
-    EMAIL_HOST_USER = ""
-    EMAIL_HOST_PASSWORD = ""
-    EMAIL_USE_TLS = False
 
-else: 
-    EMAIL_BACKEND = "anymail.backends.mailgun.EmailBackend"
-    DEFAULT_FROM_EMAIL = config('DEFAULT_FROM_EMAIL')
-    SERVER_EMAIL = config('SERVER_EMAIL')
-    ANYMAIL = {'MAILGUN_API_KEY': config('MAILGUN_API_KEY'),
-               'MAILGUN_SENDER_DOMAIN': config('MAILGUN_SENDER_DOMAIN'),
-               }
 
 # Debug tool bar
 if DEBUG:
@@ -210,7 +203,7 @@ CELERY_RESULT_SERIALIZER = 'json'
 CELERY_TIMEZONE = TIME_ZONE
 
 #CELERY BEAT
-CELERY_BEAT_BEAT_SCHEDULER = "django_celery_beat.schedulers:DatabaseScheduler"  #XXX Not sure if this configuration is working
+CELERY_BEAT_SCHEDULER = "django_celery_beat.schedulers:DatabaseScheduler"
 
 # Static files (CSS, JavaScript, Images)
 # https://docs.djangoproject.com/en/3.2/howto/static-files/

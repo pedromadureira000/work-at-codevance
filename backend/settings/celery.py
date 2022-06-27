@@ -19,11 +19,10 @@ app.config_from_object(settings, namespace='CELERY')
 
 # Celery Beat Settings
 app.conf.beat_schedule = {
-    #  'sometest': {
-            #  'task': 'payment.tasks.test_func',
-            #  'schedule': crontab(hour=0, minute=46, day_of_month=19, month_of_year = 6),
-            #'args': (2,)
-        #  }
+    'invalidate_overdue_payment_anticipation_status': {
+            'task': 'payment.tasks.invalidate_overdue_payment_anticipation_status',
+            'schedule': crontab(hour=0, minute=0),
+        }
 }
 
 # Load task modules from all registered Django apps.

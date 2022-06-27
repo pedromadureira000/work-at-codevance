@@ -1,17 +1,8 @@
-from django.db.models.query import Prefetch
 from rest_framework import serializers
-from settings.utils import has_role
-from organization.models import SupplierCompany
-from user.models import User
 from .models import Payment, PaymentHistory
 from django.utils.translation import gettext_lazy as _
 import copy
-from datetime import datetime
 from django.utils import timezone
-from .tasks import invalidate_anticipation_status
-from random import random
-from django_celery_beat.models import PeriodicTask, CrontabSchedule
-import json
 
 class PaymentGETSerializer(serializers.ModelSerializer):
     class Meta:
@@ -35,11 +26,6 @@ class PaymentPOSTSerializer(serializers.ModelSerializer):
 
     def create(self, validated_data):
         payment = Payment.objects.create(**validated_data, anticipation_status=1, operator=self.context['request'].user)
-        schedule, created = CrontabSchedule.objects.get_or_create(year=payment.due_date.year, month=payment.due_date.month, 
-                day=payment.due_date.day, hour=23, minute=59)
-        #  schedule, created = CrontabSchedule.objects.get_or_create(hour = 18, minute = 51) # XXX This is to test
-        task = PeriodicTask.objects.create(crontab=schedule, name="invalidate_anticipation_status_" + str(payment.id) + '_' + str(random()), 
-                task='payment.tasks.invalidate_anticipation_status', args=json.dumps([payment.id]))
         return payment
 
 class PaymentPUTSerializer(serializers.ModelSerializer):

@@ -2,6 +2,8 @@ from django.db import transaction
 from rest_framework import status
 from rest_framework.response import Response
 from payment.serializers import PaymentGETSerializer, PaymentHistorySerializer, PaymentPOSTSerializer, PaymentPUTSerializer, RequestAnticipationSerializer
+from payment.tasks import send_mail_func
+from user.models import User
 from .models import Payment, PaymentHistory
 from rest_framework.views import APIView
 from settings.utils import has_permission, has_role
@@ -83,7 +85,17 @@ class SpecificPaymentView(APIView):
             serializer = PaymentPUTSerializer(payment, data=request.data, context={"request": request})
             if serializer.is_valid():
                 try:
+                    try:
+                        supplier_user = User.objects.get(supplier_company_id=payment.supplier_company_id)
+                    except User.DoesNotExist:
+                        return not_found_response(object_name=_('The supplier company does not have a user. Something is wrong here.'))
                     serializer.save()
+                    if serializer.data['anticipation_status'] == 3:
+                        send_mail_func.delay(supplier_user.email, 
+                                "Payment anticipated", "The payment was anticipated with success.")
+                    if serializer.data['anticipation_status'] == 5:
+                        send_mail_func.delay(supplier_user.email, 
+                                "Payment anticipation denied", "The payment anticipation was denied.")
                     return Response(_('Payment updated.'))
                 except Exception as error:
                     transaction.rollback()
@@ -93,7 +105,6 @@ class SpecificPaymentView(APIView):
         return unauthorized_response
 
 class RequestAnticipation(APIView):
-
     @transaction.atomic
     def post(self, request, payment_id):
         if has_permission(request.user, 'request_payment_anticipation'):
@@ -110,7 +121,12 @@ class RequestAnticipation(APIView):
             serializer = RequestAnticipationSerializer(payment, data=request.data, context={"request": request})
             if serializer.is_valid():
                 try:
+                    try:
+                        supplier_user = User.objects.get(supplier_company_id=payment.supplier_company_id)
+                    except User.DoesNotExist:
+                        return not_found_response(object_name=_('The supplier company does not have a user. Something is wrong here.'))
                     serializer.save()
+                    send_mail_func.delay(supplier_user.email, "Anticipation requested ", "You have requested a payment anticipation with success.")
                     return Response(serializer.data, status=status.HTTP_200_OK)
                 except Exception as error:
                     transaction.rollback()
