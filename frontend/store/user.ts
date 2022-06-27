@@ -72,6 +72,16 @@ export const actions: ActionTree<UserState, RootState> = {
 		}
 	},
 
+	async updateCurrentUserEmail({commit, dispatch}: {commit: Commit, dispatch: Dispatch}, new_email: string) {
+		try {
+			await api.updateCurrentUserEmail(new_email)
+      dispatch("setAlert", {message: "E-mail updated." , alertType: "success"}, { root: true })
+      return 'ok'
+		} catch (error) {
+      ErrorHandler(error, commit, dispatch, this.app.i18n, "Something went wrong when trying to update user's e-mail")
+		}	
+	},
+
 }
 
 // --------------------------------------------/MUTATIONS/---------------------------------------------

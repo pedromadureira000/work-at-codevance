@@ -6,7 +6,7 @@ let supplier_company = ['company_name', 'cnpj']
 let user_fields = ['username', 'email', 'password', 'supplier_company']
 
 // Payment
-let payment_fields = ['id', 'operator', 'anticipation_due_date', 'anticipation_status','issuance_date','due_date', 'original_value']
+let payment_fields = ['id', 'operator', 'anticipation_due_date', 'anticipation_status','issuance_date','due_date', 'original_value', 'new_value']
 let payment_history_fields = ['payment', 'user', 'history_type', 'history_description', 'date' ]
 
 // field_list

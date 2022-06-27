@@ -106,6 +106,7 @@ class SpecificPaymentView(APIView):
 
 class RequestAnticipation(APIView):
     @transaction.atomic
+    @swagger_auto_schema( responses={200: RequestAnticipationSerializer}) 
     def post(self, request, payment_id):
         if has_permission(request.user, 'request_payment_anticipation'):
             if has_role(request.user, 'operator'):

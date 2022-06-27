@@ -141,9 +141,6 @@ if DEBUG:
 if DEBUG:
     INSTALLED_APPS.append("debug_toolbar")
     MIDDLEWARE.insert(1, "debug_toolbar.middleware.DebugToolbarMiddleware")
-    #  DEBUG_TOOLBAR_CONFIG = {
-        #  "SHOW_TOOLBAR_CALLBACK": lambda request: True,
-    #  }
     import socket 
     hostname, _, ips = socket.gethostbyname_ex(socket.gethostname())
     INTERNAL_IPS = [ip[:-1] + '1' for ip in ips] + ['127.0.0.1', '10.0.2.2']
@@ -188,8 +185,6 @@ TIME_ZONE = 'America/Sao_Paulo'
 
 USE_I18N = True
 
-USE_L10N = True
-
 USE_TZ = True
 
 
@@ -213,10 +208,6 @@ STATIC_ROOT = os.path.join(BASE_DIR, 'staticfiles')
 
 MEDIA_URL = '/media/'
 MEDIA_ROOT = os.path.join(BASE_DIR, 'mediafiles')
-
-# storage configuration in S3 AWS
-
-#  CONNECTFAST_ENABLED = False
 
 # Session age: 60s * 60m * 24h * 7d
 SESSION_COOKIE_AGE = 60 * 60 * 24 * 7

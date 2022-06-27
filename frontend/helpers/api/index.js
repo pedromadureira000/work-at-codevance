@@ -30,6 +30,17 @@ export default {
 				.then(() => {})
 		},
 
+	async updateCurrentUserEmail(new_email){ 
+		return await axios({
+			method: "put",
+			url: "/api/user/own_profile",
+			data: { email: new_email },
+		})
+			.then((response) => {
+				return response.data
+			})
+		},	
+
   // --------------------------------------/ CRUD Payment APIs /----------------------------------------
   async createPayment(payload){
     let data_body = {
