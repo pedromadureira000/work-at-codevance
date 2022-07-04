@@ -1,11 +1,25 @@
 Nginx configuration and Django deploy
 ==========================================
 
+Update and upgrade Ubuntu server
+------------------------------------------
+```
+sudo apt update
+sudo apt upgrade
+```
+
 Install python, nginx and curl
 ------------------------------------------
 
 ```
 sudo apt install python3-pip python3-dev libpq-dev nginx curl
+```
+
+Install python 3.9
+-----------------------------------------
+
+```
+sudo apt install python3.9
 ```
 
 Install pipenv
@@ -22,18 +36,18 @@ Install docker and postgres client
 ```
 sudo apt install docker.io
 sudo apt install docker-compose
-sudo apt install postgresql-client-13
+sudo apt install postgresql-client-12
 ```
 
 Configure git
 -----------------------------------------
+* Fork the project add the ssh public key to your github account.
 
 ```
 git config --global user.name "Your Name"
 git config --global user.email "your@email.com.br"
 cd ~/.ssh
 ssh-keygen -t ed25519 -C "your@email.com.br"
-
 ```
 
 Clone the project
@@ -50,7 +64,7 @@ You must create the .venv inside the project. You can set PIPENV_VENV_IN_PROJECT
 
 ```
 export PIPENV_VENV_IN_PROJECT="enabled"
-pipenv sync 
+pipenv sync --python /usr/bin/python3.9
 ```
 
 Notes on deploying on Raspberry-PI: 
@@ -71,8 +85,8 @@ Connect to default database and create the database that you will use
 -----------------------------------------
 
 ```
-psql postgres://user:senhasegura@localhost:5432/postgres
-create database dbname;
+psql postgres://phsw:senhasegura@localhost:5432/postgres
+create database codevance_challenge;
 ```
 
 Edit .env file
@@ -126,7 +140,7 @@ Create systemd service for Gunicorn
 sudo vim /etc/systemd/system/gunicorn.service
 ```
 
-* Then copy this to that file
+* Then copy this to that file and edit the user field and working directory path
 
 ```
 [Unit]
@@ -135,20 +149,13 @@ Requires=gunicorn.socket
 After=network.target
 
 [Service]
-User=your_ubuntu_server_user
+User=<your ubuntu server user>
 Group=www-data
-WorkingDirectory=/home/ubuntu/work-at-codevance/backend
-ExecStart=/home/ubuntu/work-at-codevance/backend/.venv/bin/gunicorn --access-logfile - --workers 3 --bind unix:/run/gunicorn.sock settings.wsgi:application
+WorkingDirectory=/home/<Your home directory>/work-at-codevance/backend
+ExecStart=/home/<Your home directory>/work-at-codevance/backend/.venv/bin/gunicorn --access-logfile - --workers 3 --bind unix:/run/gunicorn.sock settings.wsgi:application
 
 [Install]
 WantedBy=multi-user.target
-```
-
-Set proper permission to the django project directory
------------------------------------------
-
-```
-chown -R www-data:root ~/django_project
 ```
 
 Start and enable the Gunicorn socket
@@ -203,13 +210,13 @@ Configure Nginx to Proxy Pass to Gunicorn
 sudo vim /etc/nginx/sites-available/work-at-codevance
 ```
 
-* The nginx configuration code
+* Paste the nginx configuration code, and edit the sever name with your server IP.
 
 ```
 server {
         listen 80;
         # Above is the server IP
-        server_name 192.168.1.3;
+        server_name <your server ip>;
 
         location = /favicon.ico { access_log off; log_not_found off; }
 
@@ -251,22 +258,23 @@ Firewall configurations
 
 ```
 sudo ufw allow 'Nginx Full'
-sudo ufw allow 8000
-sudo ufw delete allow 8000
 ```
+
 
 Run celery
 -----------------------------------------
 
 ```
-celery -A settings worker -l INFO
+cd ~/work-at-codevance/backend
+pipenv shell
+celery -A settings worker -l INFO &
 ```
 
 Run celery beat
 -----------------------------------------
 
 ```
-celery -A settings beat -l INFO
+celery -A settings beat -l INFO &
 ```
 
 Nuxt deploy
@@ -329,7 +337,6 @@ pm2 start npm --name "project name" -- start
 ```
 pm2 startup systemd
 ```
-* Now, you have to run the command from the output of the previous command.
 * Save the PM2 process list and corresponding environments
 ```
 pm2 save
@@ -348,12 +355,28 @@ Reboot
 If at this point you encounter an error, you may need to reboot, which you can achieve with 'sudo reboot'.
 
 ```
-systemctl status pm2-pmserver4284.service
-sudo reboot
+systemctl status pm2-sammy.service #(replace sammy with your username)
 ```
 
-OBS
+Solving common errors
+----------------------------------------
+*  Nginx Is Showing the Default Page Instead of the Django Application
+  - If Nginx displays the default page instead of proxying to your application, it usually means that you need to adjust the server_name within the /etc/nginx/sites-available/myproject file to point to your server’s IP address or domain name.
+* 404 Not Found
+  - Check if your .env file is configured correctly. You may have set ALLOWED_HOSTS wrong for example.
+* Nginx Is Displaying a 502 Bad Gateway Error Instead of the Django Application
+  - A 502 error indicates that Nginx is unable to successfully proxy the request. A wide range of configuration problems express themselves with a 502 error, so more information is required to troubleshoot properly.
+  - The primary place to look for more information is in Nginx’s error logs. Generally, this will tell you what conditions caused problems during the proxying event. Follow the Nginx error logs by typing:
+  ```
+  sudo tail -F /var/log/nginx/error.log
+  ```
+
+The primary place to look for more information is in Nginx’s error logs. Generally, this will tell you what conditions caused problems during the proxying event. Follow the Nginx error logs by typing:
+* `npm install` ends with "Killed" (https://stackoverflow.com/questions/38127667/npm-install-ends-with-killed)
+
+PLUS
 -----------------------------------------
+
 * Some PM2 commands
 ```
 pm2 stop app_name_or_id
@@ -362,4 +385,10 @@ pm2 list
 pm2 info app_name
 pm2 monit (status, CPU, and memory usage)
 pm2 logs order-system --lines 1000
+```
+
+* It may be useful to testing Django
+```
+sudo ufw allow 8000
+sudo ufw delete allow 8000
 ```
