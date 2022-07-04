@@ -18,6 +18,7 @@ djangorestframework-simplejwt = "*"
 celery = "*"
 django-redis = "*"
 django-celery-beat = "*"
+sentry-sdk = "*"
 
 [dev-packages]
 pytest = "*"
